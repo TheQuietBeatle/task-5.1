@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"F:/New folder \\(3\\)/New folder/task-5.1\" && find server client -type f -not -path \"*/node_modules/*\" | head -100)",
+      "Bash(cd \"F:/New folder \\(3\\)/New folder/task-5.1\" && cat package.json && npm install express-mongo-sanitize --workspace server 2>&1 | tail -20)",
+      "Bash(cd \"F:/New folder \\(3\\)/New folder/task-5.1\" && git status && echo \"---BRANCH---\" && git branch -a && echo \"---FILES---\" && ls -la)",
+      "Bash(cd \"F:/New folder \\(3\\)/New folder/task-5.1\" && echo \"---AGENTS.md---\" && cat AGENTS.md 2>/dev/null | head -100 && echo \"---CLAUDE.md---\" && cat CLAUDE.md 2>/dev/null | head -50 && echo \"---.qoder---\" && ls -laR .qoder 2>/dev/null | head -40)",
+      "Bash(cd \"F:/New folder \\(3\\)/New folder/task-5.1\" && cat .qoder/settings.local.json && echo \"---GITHUB---\" && ls -laR .github | head -30 && echo \"---TESTS---\" && ls -laR server/tests | head -40)",
+      "Bash(cd \"F:/New folder \\(3\\)/New folder/task-5.1\" && node -e \"\nconst fs=require\\('fs'\\);\nconst m=fs.readFileSync\\('server/.env','utf8'\\).match\\(/^MONGO_URI=\\(.*\\)$/m\\)[1].trim\\(\\);\n// strip scheme, then strip userinfo, then take path before '?'\nlet s=m.replace\\(/^mongodb\\(\\\\+srv\\)?:\\\\/\\\\//,''\\);\nconst at=s.indexOf\\('@'\\);\ns=at>=0?s.slice\\(at+1\\):s;\nconst pathPart=\\(s.split\\('?'\\)[0].split\\('/'\\)[1]\\)||'';\nconsole.log\\('dbname:', JSON.stringify\\(pathPart||'\\(none -> defaults to test\\)'\\)\\);\nconst q=m.split\\('?'\\)[1]||'';\nconsole.log\\('replica set param present:', /replicaSet=/.test\\(q\\)\\);\n\")",
+      "Bash(cd \"F:/New folder \\(3\\)/New folder/task-5.1\" && echo \"---seed file---\" && cat server/src/seed/instructors.js && echo \"---test deps installed?---\" && ls node_modules | grep -iE \"^\\(jest|supertest|mongodb-memory-server|bcryptjs|express-mongo-sanitize|joi\\)$\" ; echo \"---server node_modules---\" && ls server/node_modules 2>/dev/null | grep -iE \"^\\(jest|supertest|mongodb-memory-server|bcryptjs|express-mongo-sanitize\\)$\"; echo \"---jest config?---\"; ls server/jest.config.* server/package.json 2>/dev/null.)"
+    ]
+  }
+}

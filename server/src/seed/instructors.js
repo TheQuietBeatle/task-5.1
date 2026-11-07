@@ -5,7 +5,8 @@ import { connectDB } from '../config/db.js';
 import { Instructor } from '../models/Instructor.js';
 
 // Seed data for the Instructor Portal NoSQL injection lab.
-// Passwords are plaintext ON PURPOSE (see Instructor model / Flow.md).
+// Passwords are hashed by the model's pre('save') hook, so create() is used
+// rather than insertMany() (which skips hooks).
 const instructors = [
   {
     name: 'Prof. Alice Smith',
@@ -50,7 +51,10 @@ const instructors = [
 async function run() {
   await connectDB();
   await Instructor.deleteMany({});
-  const created = await Instructor.insertMany(instructors);
+  const created = [];
+  for (const instructor of instructors) {
+    created.push(await Instructor.create(instructor));
+  }
   console.log(`Seeded ${created.length} instructor(s):`);
   for (const i of created) {
     console.log(`  - ${i.username} (${i.role})`);
